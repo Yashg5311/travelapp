@@ -8,6 +8,8 @@ import userRoute from './routes/users.js'
 import authRoute from './routes/auth.js'
 import reviewRoute from './routes/review.js'
 import bookingRoute from './routes/bookings.js'
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 dotenv.config();
 
@@ -51,7 +53,16 @@ app.use("/api/v1/users" , userRoute);
 app.use("/api/v1/review" , reviewRoute);
 app.use("/api/v1/booking" , bookingRoute);
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
+
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/client/build")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+    });
+}
 
 
 app.listen(port, () => {
